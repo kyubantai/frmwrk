@@ -36,7 +36,7 @@ Configuration array has several parameters :
 Pretty URL
 ==========
 
-The pretty url feature is only used to simplify urls simply. Here are some syntaxes:
+The pretty url feature is only used to simplify urls. Here are some samples:
 
 ```
 http://domain.tld/CONTROLLER_NAME
@@ -70,6 +70,11 @@ class index extends \Frmwrk\Controller
     }
 }
 ```
+
+What's next?
+============
+
+It's a good question, and I don't really know. The framework is updated every time I see that it's missing something. The most important feature is the database management, but there is also a real template system with cache management to do.
 
 Question?
 =========
