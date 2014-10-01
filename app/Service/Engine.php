@@ -2,6 +2,8 @@
 
 namespace Frmwrk;
 
+require_once __DIR__ . '/Controller.php';
+
 /**
  * Class Engine
  * @package Frmwrk
@@ -220,5 +222,34 @@ class Engine
         {
             throw new \Exception('InvalidControllerName: ' . $this->controller);
         }
+    }
+
+    /**
+     * Load and execute the controller
+     * @throws \Exception
+     */
+    public function render()
+    {
+        if (!self::checkController($this->controller))
+        {
+            throw new \Exception('InvalidControllerName: ' . $this->controller);
+        }
+
+        require $this->getControllerPath($this->controller);
+
+        if (!class_exists($this->controller))
+        {
+            throw new \Exception('ClassNotDefinedException: ' . $this->controller);
+        }
+
+        $controller_instance = new $this->controller();
+
+        if (!is_subclass_of($controller_instance, 'Frmwrk\Controller'))
+        {
+            throw new \Exception('ClassIsNotAController: ' . $this->controller);
+        }
+
+        $controller_instance->init($this->variables);
+        $render = $controller_instance->render();
     }
 } 
