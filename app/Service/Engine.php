@@ -26,7 +26,8 @@ class Engine
         'views'              => '/views',        // Views path
         'controllers'        => '/controllers',  // Controllers path
         'default_controller' => 'index', // Default controller name
-        'pretty_url'         => true     // Use Frmwrk's url rewriting (Needs a htaccess/nginx redirection)
+        'pretty_url'         => true,    // Use Frmwrk's url rewriting (Needs a htaccess/nginx redirection)
+        'notfound'           => 'notfound'  // Controller name for 404 errors
     ];
 
     /**
@@ -68,7 +69,7 @@ class Engine
         }
 
         // Check if class exists
-        if (!array_key_exists($controllerName, self::file_get_php_classes(self::getControllerPath($controllerName))))
+        if (!in_array($controllerName, self::file_get_php_classes(self::getControllerPath($controllerName))))
         {
             return false;
         }
@@ -229,7 +230,7 @@ class Engine
             $array = array_filter($array, "strlen");
             $array = array_values($array);
 
-            if (isset($array[0]) && $this->checkController($array[0]))
+            if (isset($array[0]))
             {
                 $this->setController($array[0]);
             }
@@ -245,7 +246,7 @@ class Engine
 
         if (!self::checkController($this->controller))
         {
-            throw new \Exception('InvalidControllerName: ' . $this->controller);
+            $this->setController(self::$_config['notfound']);
         }
     }
 
@@ -256,15 +257,17 @@ class Engine
      */
     private function loadView($parameters)
     {
-        if (!isset($parameters[0]) || self::checkView($parameters[0]))
+        if (!isset($parameters[0]) || !self::checkView($parameters[0]))
         {
             throw new \Exception('InvalidViewName: ' . $parameters[0]);
         }
 
         if (isset($parameters[1]) && is_array($parameters[1]))
-        foreach($parameters[1] as $key => $value)
         {
-            ${$key} = $value;
+            foreach($parameters[1] as $key => $value)
+            {
+                ${$key} = $value;
+            }
         }
 
         require_once self::getViewPath($parameters[0]);
@@ -298,6 +301,10 @@ class Engine
         $controller_instance->init($this->variables);
 
         $render = $controller_instance->render();
-        $this->loadView($render);
+
+        if ($render != null)
+        {
+            $this->loadView($render);
+        }
     }
 } 
