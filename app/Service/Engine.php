@@ -77,6 +77,31 @@ class Engine
     }
 
     /**
+     * Return view's file path
+     * @param string $viewName
+     * @return string
+     */
+    public static function getViewPath($viewName)
+    {
+        return self::$_config['views'] . '/' . $viewName . '.php';
+    }
+
+    /**
+     * Check if specified view exists
+     * @param string $viewName
+     * @return bool
+     */
+    public static function checkView($viewName)
+    {
+        if (!is_file(self::getViewPath($viewName)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the instance of the Engine.
      * (If not existing, it will create a new one)
      * @return Engine The class instance
@@ -225,6 +250,27 @@ class Engine
     }
 
     /**
+     * Applies variables and load specified view
+     * @param $parameters
+     * @throws \Exception
+     */
+    private function loadView($parameters)
+    {
+        if (!isset($parameters[0]) || self::checkView($parameters[0]))
+        {
+            throw new \Exception('InvalidViewName: ' . $parameters[0]);
+        }
+
+        if (isset($parameters[1]) && is_array($parameters[1]))
+        foreach($parameters[1] as $key => $value)
+        {
+            ${$key} = $value;
+        }
+
+        require_once self::getViewPath($parameters[0]);
+    }
+
+    /**
      * Load and execute the controller
      * @throws \Exception
      */
@@ -250,6 +296,8 @@ class Engine
         }
 
         $controller_instance->init($this->variables);
+
         $render = $controller_instance->render();
+        $this->loadView($render);
     }
 } 
