@@ -1,6 +1,7 @@
 <?php
 
 namespace Frmwrk;
+use Frmwrk\Template\Regexp;
 
 /**
  * Class Template
@@ -102,11 +103,11 @@ class Template
             throw new \Exception('MissingCodeException');
         }
 
-        $this->parseEcho();
-        $this->parseForeach();
-        $this->parseIf();
+        // Parse all
+        $this->code = preg_replace(Regexp::getTemplateRegex(), Regexp::getPHPRender(), $this->code);
 
-        $this->cache();
+        //TODO:
+        $this->generate();
 
         return $this->code;
     }
@@ -114,7 +115,7 @@ class Template
     /**
      * Create a cache file
      */
-    public function cache()
+    private function generate()
     {
         foreach($this->vars as $key => $value)
         {
@@ -129,37 +130,67 @@ class Template
         $this->code = ob_get_contents();
         ob_end_clean();
         unlink($tmp_path);
-
-        file_put_contents($this->web_dir . '/cache/test.html', $this->code);
     }
+}
 
+namespace Frmwrk\Template;
 
+class Regexp
+{
+    const ECHO_SYNTAXE_TEMPLATE = '/{{_([a-z0-9\[\]\'\"\->]+)_}}/';
+    const ECHO_SYNTAXE_PHP      = '<?php echo $$1; ?>';
 
-    //////////////////
-    // Parsing functions
-    //////////////////
-    /**
-     * Parse echos
-     */
-    private function parseEcho()
+    const PRINT_SYNTAXE_TEMPLATE = '/_([a-z0-9]+)_/';
+    const PRINT_SYNTAXE_PHP      = '$$1';
+
+    const FOREACH_SYNTAXE_TEMPLATE = '/<foreach\s+var="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/';
+    const FOREACH_SYNTAXE_PHP      = '<?php foreach($$1 as $$2): ?>';
+
+    const FOREACH_WITH_KEY_SYNTAXE_TEMPLATE = '/<foreach\s+var="([a-z0-9_]+)"\s+key="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/';
+    const FOREACH_WITH_KEY_SYNTAXE_PHP      = '<?php foreach($$1 as $$2 => $$3): ?>';
+
+    const FOREACH_CLOSING_SYNTAXE_TEMPLATE = '/<\/foreach>/';
+    const FOREACH_CLOSING_SYNTAXE_PHP      = '<?php endforeach; ?>';
+
+    const IF_SYNTAXE_TEMPLATE = '/<if cond="([^"]+)">/';
+    const IF_SYNTAXE_PHP      = '<?php if ($1): ?>';
+
+    const ELSIF_SYNTAXE_TEMPLATE = '/<elsif cond="([^"]+)">/';
+    const ELSIF_SYNTAXE_PHP      = '<?php elsif($1): ?>';
+
+    const ELSE_SYNTAXE_TEMPLATE = '/<else>/';
+    const ELSE_SYNTAXE_PHP      = '<?php else: ?>';
+
+    const IF_CLOSING_SYNTAXE_TEMPLATE = '/<\/if>/';
+    const IF_CLOSING_SYNTAXE_PHP      = '<?php endif; ?>';
+
+    public static function getTemplateRegex()
     {
-        $this->code = preg_replace('/{{_([a-z0-9\[\]\'\"\->]+)_}}/', '<?php echo $$1; ?>', $this->code);
-        $this->code = preg_replace('/_([a-z0-9]+)_/',                '$$1',                $this->code);
+        return [
+            self::ECHO_SYNTAXE_TEMPLATE,
+            self::PRINT_SYNTAXE_TEMPLATE,
+            self::FOREACH_SYNTAXE_TEMPLATE,
+            self::FOREACH_WITH_KEY_SYNTAXE_TEMPLATE,
+            self::FOREACH_CLOSING_SYNTAXE_TEMPLATE,
+            self::IF_SYNTAXE_TEMPLATE,
+            self::ELSIF_SYNTAXE_TEMPLATE,
+            self::ELSE_SYNTAXE_TEMPLATE,
+            self::IF_CLOSING_SYNTAXE_TEMPLATE
+        ];
     }
 
-    private function parseForeach()
+    public static function getPHPRender()
     {
-        $this->code = preg_replace('/<foreach\s+var="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/',                      '<?php foreach($$1 as $$2): ?>',        $this->code);
-        $this->code = preg_replace('/<foreach\s+var="([a-z0-9_]+)"\s+key="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/', '<?php foreach($$1 as $$2 => $$3): ?>', $this->code);
-        $this->code = preg_replace('/<\/foreach>/',                                                             '<?php endforeach; ?>',                 $this->code);
+        return [
+            self::ECHO_SYNTAXE_PHP,
+            self::PRINT_SYNTAXE_PHP,
+            self::FOREACH_SYNTAXE_PHP,
+            self::FOREACH_WITH_KEY_SYNTAXE_PHP,
+            self::FOREACH_CLOSING_SYNTAXE_PHP,
+            self::IF_SYNTAXE_PHP,
+            self::ELSIF_SYNTAXE_PHP,
+            self::ELSE_SYNTAXE_PHP,
+            self::IF_CLOSING_SYNTAXE_PHP
+        ];
     }
-
-    private function parseIf()
-    {
-        $this->code = preg_replace('/<if cond="([^"]+)">/',    '<?php if ($1): ?>',   $this->code);
-        $this->code = preg_replace('/<elsif cond="([^"]+)">/', '<?php elsif($1): ?>', $this->code);
-        $this->code = preg_replace('/<else>/',                 '<?php else: ?>',      $this->code);
-        $this->code = preg_replace('/<\/if>/',                 '<?php endif; ?>',     $this->code);
-    }
-
-} 
+}

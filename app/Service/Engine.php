@@ -293,7 +293,7 @@ class Engine
     public function parse($render)
     {
         $view = $render[0];
-        $vars = $render[1];
+        $vars = isset($render[1]) ? $render[1] : null;
 
         if ($view == null)
         {
