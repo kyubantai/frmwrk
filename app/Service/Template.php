@@ -106,14 +106,14 @@ class Template
         // Parse all
         $this->code = preg_replace(Regexp::getTemplateRegex(), Regexp::getPHPRender(), $this->code);
 
-        //TODO:
+        // Generate html code from parsed code
         $this->generate();
 
         return $this->code;
     }
 
     /**
-     * Create a cache file
+     * Generate a html file from the parsed code
      */
     private function generate()
     {
@@ -135,35 +135,70 @@ class Template
 
 namespace Frmwrk\Template;
 
+/**
+ * Class Regexp
+ * @package Frmwrk\Template
+ */
 class Regexp
 {
+    /**
+     * Echo
+     */
     const ECHO_SYNTAXE_TEMPLATE = '/{{_([a-z0-9\[\]\'\"\->]+)_}}/';
     const ECHO_SYNTAXE_PHP      = '<?php echo $$1; ?>';
 
+    /**
+     * Var to php var
+     */
     const PRINT_SYNTAXE_TEMPLATE = '/_([a-z0-9]+)_/';
     const PRINT_SYNTAXE_PHP      = '$$1';
 
+    /**
+     * Foreach (value only)
+     */
     const FOREACH_SYNTAXE_TEMPLATE = '/<foreach\s+var="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/';
     const FOREACH_SYNTAXE_PHP      = '<?php foreach($$1 as $$2): ?>';
 
+    /**
+     * Foreach (key=>value)
+     */
     const FOREACH_WITH_KEY_SYNTAXE_TEMPLATE = '/<foreach\s+var="([a-z0-9_]+)"\s+key="([a-z0-9_]+)"\s+as="([a-z0-9_]+)">/';
     const FOREACH_WITH_KEY_SYNTAXE_PHP      = '<?php foreach($$1 as $$2 => $$3): ?>';
 
+    /**
+     * Foreach eot
+     */
     const FOREACH_CLOSING_SYNTAXE_TEMPLATE = '/<\/foreach>/';
     const FOREACH_CLOSING_SYNTAXE_PHP      = '<?php endforeach; ?>';
 
+    /**
+     * If
+     */
     const IF_SYNTAXE_TEMPLATE = '/<if cond="([^"]+)">/';
     const IF_SYNTAXE_PHP      = '<?php if ($1): ?>';
 
+    /**
+     * Elsif
+     */
     const ELSIF_SYNTAXE_TEMPLATE = '/<elsif cond="([^"]+)">/';
     const ELSIF_SYNTAXE_PHP      = '<?php elsif($1): ?>';
 
+    /**
+     * Else
+     */
     const ELSE_SYNTAXE_TEMPLATE = '/<else>/';
     const ELSE_SYNTAXE_PHP      = '<?php else: ?>';
 
+    /**
+     * Endif
+     */
     const IF_CLOSING_SYNTAXE_TEMPLATE = '/<\/if>/';
     const IF_CLOSING_SYNTAXE_PHP      = '<?php endif; ?>';
 
+    /**
+     * Get an array of all regex
+     * @return array
+     */
     public static function getTemplateRegex()
     {
         return [
@@ -179,6 +214,10 @@ class Regexp
         ];
     }
 
+    /**
+     * Get an array of result strings
+     * @return array
+     */
     public static function getPHPRender()
     {
         return [
