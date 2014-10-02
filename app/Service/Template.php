@@ -111,6 +111,9 @@ class Template
         return $this->code;
     }
 
+    /**
+     * Create a cache file
+     */
     public function cache()
     {
         foreach($this->vars as $key => $value)
@@ -119,16 +122,12 @@ class Template
         }
 
         $hashname = hash('md5', $this->code);
-
         $tmp_path = $this->web_dir . '/tmp/' . $hashname;
-
         file_put_contents($tmp_path, $this->code);
-
         ob_start();
         require_once $tmp_path;
         $this->code = ob_get_contents();
         ob_end_clean();
-
         unlink($tmp_path);
 
         file_put_contents($this->web_dir . '/cache/test.html', $this->code);
@@ -145,7 +144,7 @@ class Template
     private function parseEcho()
     {
         $this->code = preg_replace('/{{_([a-z0-9\[\]\'\"\->]+)_}}/', '<?php echo $$1; ?>', $this->code);
-        $this->code = preg_replace('/__([a-z0-9]+)__/',   '$$1',                $this->code);
+        $this->code = preg_replace('/__([a-z0-9]+)__/',              '$$1',                $this->code);
     }
 
     private function parseForeach()
