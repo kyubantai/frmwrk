@@ -19,7 +19,7 @@ class index extends \Frmwrk\Controller
      */
     function render()
     {
-        return [ 'index', [ 'text' => 'hello world!' ] ];
+        return [ 'index', [ 'helloworld' => 'hello world!', 'array' => [ 't' => 1, 'e' => 2, 's' => 3 ] ] ];
     }
 
 

@@ -6,7 +6,8 @@ require __DIR__ . '/../vendor/autoload.php';
 $config =
 [
     'controllers' => __DIR__ . '/../app/Controllers/',
-    'views'       => __DIR__ . '/views/'
+    'views'       => __DIR__ . '/views/',
+    'web'         => __DIR__
 ];
 
 

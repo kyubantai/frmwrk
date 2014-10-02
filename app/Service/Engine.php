@@ -3,6 +3,7 @@
 namespace Frmwrk;
 
 require_once __DIR__ . '/Controller.php';
+require_once __DIR__ . '/Template.php';
 
 /**
  * Class Engine
@@ -27,7 +28,8 @@ class Engine
         'controllers'        => '/controllers',  // Controllers path
         'default_controller' => 'index', // Default controller name
         'pretty_url'         => true,    // Use Frmwrk's url rewriting (Needs a htaccess/nginx redirection)
-        'notfound'           => 'notfound'  // Controller name for 404 errors
+        'notfound'           => 'notfound',  // Controller name for 404 errors
+        'web'                => 'web/'   // Web path
     ];
 
     /**
@@ -251,29 +253,6 @@ class Engine
     }
 
     /**
-     * Applies variables and load specified view
-     * @param $parameters
-     * @throws \Exception
-     */
-    private function loadView($parameters)
-    {
-        if (!isset($parameters[0]) || !self::checkView($parameters[0]))
-        {
-            throw new \Exception('InvalidViewName: ' . $parameters[0]);
-        }
-
-        if (isset($parameters[1]) && is_array($parameters[1]))
-        {
-            foreach($parameters[1] as $key => $value)
-            {
-                ${$key} = $value;
-            }
-        }
-
-        require_once self::getViewPath($parameters[0]);
-    }
-
-    /**
      * Load and execute the controller
      * @throws \Exception
      */
@@ -302,9 +281,36 @@ class Engine
 
         $render = $controller_instance->render();
 
-        if ($render != null)
+        echo $this->parse($render);
+    }
+
+    /**
+     * Uses the Template class to parse the view
+     * @param string $render
+     * @return string
+     * @throws \Exception
+     */
+    public function parse($render)
+    {
+        $view = $render[0];
+        $vars = $render[1];
+
+        if ($view == null)
         {
-            $this->loadView($render);
+            throw new \Exception('NoViewException');
         }
+
+        $tmtplt = new Template(self::$_config['web']);
+        $tmtplt->fromFile(self::getViewPath($view));
+
+        if ($vars != null && is_array($vars))
+        {
+            foreach($vars as $key => $value)
+            {
+                $tmtplt->add($key, $value);
+            }
+        }
+
+        return $tmtplt->parse();
     }
 } 
