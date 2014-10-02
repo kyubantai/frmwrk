@@ -144,7 +144,7 @@ class Template
     private function parseEcho()
     {
         $this->code = preg_replace('/{{_([a-z0-9\[\]\'\"\->]+)_}}/', '<?php echo $$1; ?>', $this->code);
-        $this->code = preg_replace('/__([a-z0-9]+)__/',              '$$1',                $this->code);
+        $this->code = preg_replace('/_([a-z0-9]+)_/',                '$$1',                $this->code);
     }
 
     private function parseForeach()
