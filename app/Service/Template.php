@@ -180,8 +180,8 @@ class Regexp
     /**
      * Elsif
      */
-    const ELSIF_SYNTAXE_TEMPLATE = '/<elsif cond="([^"]+)">/';
-    const ELSIF_SYNTAXE_PHP      = '<?php elsif($1): ?>';
+    const ELSEIF_SYNTAXE_TEMPLATE = '/<elseif cond="([^"]+)">/';
+    const ELSEIF_SYNTAXE_PHP      = '<?php elseif($1): ?>';
 
     /**
      * Else
@@ -208,7 +208,7 @@ class Regexp
             self::FOREACH_WITH_KEY_SYNTAXE_TEMPLATE,
             self::FOREACH_CLOSING_SYNTAXE_TEMPLATE,
             self::IF_SYNTAXE_TEMPLATE,
-            self::ELSIF_SYNTAXE_TEMPLATE,
+            self::ELSEIF_SYNTAXE_TEMPLATE,
             self::ELSE_SYNTAXE_TEMPLATE,
             self::IF_CLOSING_SYNTAXE_TEMPLATE
         ];
@@ -227,7 +227,7 @@ class Regexp
             self::FOREACH_WITH_KEY_SYNTAXE_PHP,
             self::FOREACH_CLOSING_SYNTAXE_PHP,
             self::IF_SYNTAXE_PHP,
-            self::ELSIF_SYNTAXE_PHP,
+            self::ELSEIF_SYNTAXE_PHP,
             self::ELSE_SYNTAXE_PHP,
             self::IF_CLOSING_SYNTAXE_PHP
         ];
