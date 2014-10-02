@@ -73,6 +73,40 @@ class index extends \Frmwrk\Controller
 }
 ```
 
+Templates
+=========
+
+You can now use php as tags in your views!
+It's currently a prototype version of the template parser, but it works.
+Foreach, if/elseif/else and echo are available and here how to use them:
+
+```html
+<!-- A simple foreach -->
+<foreach var="array" as="value">
+    Value: {{_value_}}
+</foreach>
+
+<!-- A key/value foreach -->
+<foreach var="array" key="k" as="value">
+    Key: {{_k_}}<br/>
+    Value: {{_value_}}
+</foreach>
+
+<!-- A if -->
+<if cond="_myvar_ == 20">
+    20
+<elseif cond="_myvar_ > 50">
+    > 50
+<else>
+    < 50 & != 20
+</if>
+
+<!-- Display a var-->
+{{_myvar_}}
+```
+
+/!\ It still is a prototype and will change!
+
 What's next?
 ============
 
