@@ -15,7 +15,8 @@ require __DIR__ . '/../vendor/autoload.php';
 $config =
 [
 'controllers' => __DIR__ . '/../app/Controllers/',
-'views'       => __DIR__ . '/views/'
+'views'       => __DIR__ . '/views/',
+'web'         => __DIR__
 ];
 \Frmwrk\Engine::init($config);
 $instance = \Frmwrk\Engine::getInstance();
@@ -32,6 +33,7 @@ Configuration array has several parameters :
 * default_controller: (default: 'index') It's the name of the default controller
 * notfound: (default: 'notfound') It's the name of the controller which is loaded when the asked controller does not exists.
 * pretty_url: (default: true) If enabled, you will use a clearer way to pass variables through url. (See next part for more details)
+* web: It's the path of the web folder
 
 Pretty URL
 ==========
